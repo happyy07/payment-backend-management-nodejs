@@ -1,5 +1,3 @@
-// paymentSchema.js
-
 const Joi = require("joi");
 
 const paymentSchema = Joi.object({
@@ -11,20 +9,21 @@ const paymentSchema = Joi.object({
   payee_added_date_utc: Joi.date().iso().required(),
   payee_due_date: Joi.date().iso().required(),
   payee_address_line_1: Joi.string().required(),
-  payee_address_line_2: Joi.string().allow(null, ""),
+  payee_address_line_2: Joi.string().optional().allow(null),
   payee_city: Joi.string().required(),
-  payee_country: Joi.string().length(2).required(), // ISO 3166-1 alpha-2
-  payee_province_or_state: Joi.string().allow(null, ""),
+  payee_country: Joi.string().length(2).uppercase().required(),
+  payee_province_or_state: Joi.string().optional().allow(null),
   payee_postal_code: Joi.string().required(),
   payee_phone_number: Joi.string()
-    .pattern(/^\+?[1-9]\d{1,14}$/)
-    .required(), // E.164 format
+    .pattern(/^\+[1-9]\d{1,14}$/)
+    .required(),
   payee_email: Joi.string().email().required(),
-  currency: Joi.string().length(3).required(), // ISO 4217
-  discount_percent: Joi.number().precision(2).min(0).max(100).allow(null),
-  tax_percent: Joi.number().precision(2).min(0).max(100).allow(null),
-  due_amount: Joi.number().precision(2).positive().required(),
-  total_due: Joi.number().precision(2).positive().required(),
+  currency: Joi.string().length(3).uppercase().required(),
+  discount_percent: Joi.number().min(0).max(100).optional().allow(null),
+  tax_percent: Joi.number().min(0).optional().allow(null),
+  due_amount: Joi.number().min(0).required(),
+  total_due: Joi.number().optional().allow(null),
+  evidence_file_id: Joi.string().optional().allow(null),
 });
 
 module.exports = paymentSchema;

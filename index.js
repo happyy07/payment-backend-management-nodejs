@@ -10,7 +10,7 @@ const PORT = process.env.PORT || 5001;
 
 const server = http.createServer((req, res) => {
   // Set CORS headers
-  res.setHeader("Access-Control-Allow-Origin", "http://your-frontend-uri.com"); // Replace with your frontend URI
+  res.setHeader("Access-Control-Allow-Origin", "*"); // Replace with your frontend URI
   res.setHeader(
     "Access-Control-Allow-Methods",
     "GET, POST, PUT, DELETE, OPTIONS"
@@ -26,19 +26,19 @@ const server = http.createServer((req, res) => {
 
   // Route handling
   switch (true) {
-    case req.method === "GET" && req.url === "/getPayments":
+    case req.method === "GET" && req.url.includes("/payments/getAllPayments"):
       getPayments(req, res);
       break;
-    case req.method === "POST" && req.url === "/uploadCSV":
+    case req.method === "POST" && req.url === "/payments/uploadCSV":
       uploadCSV(req, res);
       break;
-    case req.method === "POST" && req.url === "/createPayment":
+    case req.method === "POST" && req.url === "/payments/createPayment":
       postPayment(req, res);
       break;
-    case req.method === "PUT" && req.url === "/updatePayment":
+    case req.method === "PUT" && req.url === "/payments/updatePayment":
       putPayment(req, res);
       break;
-    case req.method === "DELETE" && req.url === "/deletePayment":
+    case req.method === "DELETE" && req.url === "/payments/deletePayment":
       deletePayment(req, res);
       break;
     default:
