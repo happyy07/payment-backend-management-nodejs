@@ -3,6 +3,7 @@ const getPayments = require("./methods/get-payments");
 const postPayment = require("./methods/post-payment.js");
 const putPayment = require("./methods/put-payment.js");
 const deletePayment = require("./methods/delete-payment");
+const uploadCSV = require("./methods/upload-csv");
 require("dotenv").config();
 
 const PORT = process.env.PORT || 5001;
@@ -24,17 +25,20 @@ const server = http.createServer((req, res) => {
   }
 
   // Route handling
-  switch (req.method) {
-    case "GET":
+  switch (true) {
+    case req.method === "GET" && req.url === "/getPayments":
       getPayments(req, res);
       break;
-    case "POST":
+    case req.method === "POST" && req.url === "/uploadCSV":
+      uploadCSV(req, res);
+      break;
+    case req.method === "POST" && req.url === "/createPayment":
       postPayment(req, res);
       break;
-    case "PUT":
+    case req.method === "PUT" && req.url === "/updatePayment":
       putPayment(req, res);
       break;
-    case "DELETE":
+    case req.method === "DELETE" && req.url === "/deletePayment":
       deletePayment(req, res);
       break;
     default:

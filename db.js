@@ -1,5 +1,4 @@
 const { MongoClient } = require("mongodb");
-import data from "./node_modules/@mongodb-js/saslprep/dist/code-points-data-browser.d";
 require("dotenv").config();
 
 const uri = process.env.MONGODB_URL;
