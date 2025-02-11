@@ -1,6 +1,6 @@
 const multer = require("multer");
 const csvtojson = require("csvtojson");
-const paymentSchema = require("../model/paymentSchema");
+const { paymentSchema } = require("../model/paymentSchema");
 const { connectDB } = require("../db");
 const { processDateRecord } = require("../utils/commonUtils");
 
@@ -17,12 +17,11 @@ async function uploadCSV(req, res) {
     // Handle file upload
     upload(req, res, async (err) => {
       if (err) {
-        console.error("happy Error uploading file:", err);
+        console.error("Error uploading file:", err);
         res.writeHead(400, { "Content-Type": "application/json" });
         res.end(JSON.stringify({ error: "Error uploading file" }));
       }
 
-      console.log("dhruv req.file", req.file);
       // Convert CSV buffer to JSON
       const csvData = await csvtojson().fromString(req.file.buffer.toString());
 

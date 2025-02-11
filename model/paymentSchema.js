@@ -9,7 +9,9 @@ const paymentSchema = Joi.object({
   payee_added_date_utc: Joi.date().iso().required(),
   payee_due_date: Joi.date().iso().required(),
   payee_address_line_1: Joi.string().required(),
-  payee_address_line_2: Joi.string().optional().allow(null),
+  payee_address_line_2: Joi.string()
+    .optional()
+    .allow(null || ""),
   payee_city: Joi.string().required(),
   payee_country: Joi.string().length(2).uppercase().required(),
   payee_province_or_state: Joi.string().optional().allow(null),
@@ -26,4 +28,13 @@ const paymentSchema = Joi.object({
   evidence_file_id: Joi.string().optional().allow(null),
 });
 
-module.exports = paymentSchema;
+const paymentUpdateSchema = Joi.object({
+  payee_payment_status: Joi.string()
+    .valid("completed", "due_now", "overdue", "pending")
+    .required(),
+  evidence_file_id: Joi.string().optional().allow(null),
+  payee_due_date: Joi.date().iso().required(),
+  due_amount: Joi.number().min(0).required(),
+});
+
+module.exports = { paymentSchema, paymentUpdateSchema };
