@@ -5,6 +5,7 @@ const putPayment = require("./methods/put-payment.js");
 const deletePayment = require("./methods/delete-payment");
 const uploadCSV = require("./methods/upload-csv");
 const uploadEvidence = require("./methods/upload-evidence.js");
+const downloadEvidence = require("./methods/download-evidence.js");
 require("dotenv").config();
 
 const PORT = process.env.PORT || 5001;
@@ -44,12 +45,25 @@ const server = http.createServer((req, res) => {
       req.paymentId = paymentId; // Attach paymentId to the request object
       putPayment(req, res);
       break;
-    case req.method === "DELETE" && req.url === "/payments/deletePayment":
+    case req.method === "DELETE" &&
+      /^\/payments\/deletePayment\/([^\/]+)$/.test(req.url):
+      const deletePaymentId = req.url.match(
+        /^\/payments\/deletePayment\/([^\/]+)$/
+      )[1];
+      req.paymentId = deletePaymentId; // Attach paymentId to the request object
       deletePayment(req, res);
       break;
     case req.method === "POST" &&
       /^\/payments\/[^\/]+\/evidence$/.test(req.url):
       uploadEvidence(req, res);
+      break;
+    case req.method === "GET" &&
+      /^\/payments\/[^\/]+\/downloadEvidence$/.test(req.url):
+      const payment_Id = req.url.match(
+        /^\/payments\/([^\/]+)\/downloadEvidence$/
+      )[1];
+      req.paymentId = payment_Id; // Attach paymentId to the request object
+      downloadEvidence(req, res);
       break;
     default:
       res.statusCode = 404;
