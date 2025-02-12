@@ -4,8 +4,10 @@ const postPayment = require("./methods/post-payment.js");
 const putPayment = require("./methods/put-payment.js");
 const deletePayment = require("./methods/delete-payment");
 const uploadCSV = require("./methods/upload-csv");
-const uploadEvidence = require("./methods/upload-evidence.js");
-const downloadEvidence = require("./methods/download-evidence.js");
+const downloadEvidence = require("./methods/download-evidence");
+const createUser = require("./methods/create-user");
+const loginUser = require("./methods/login-user");
+const authenticateToken = require("./middleware/auth"); // Import the middleware
 require("dotenv").config();
 
 const PORT = process.env.PORT || 5001;
@@ -17,10 +19,12 @@ const server = http.createServer((req, res) => {
     "Access-Control-Allow-Methods",
     "GET, POST, PUT, DELETE, OPTIONS"
   );
-  res.setHeader("Access-Control-Allow-Headers", "Content-Type, Accept");
+  res.setHeader(
+    "Access-Control-Allow-Headers",
+    "Content-Type, Accept, Authorization"
+  );
 
   if (req.method === "OPTIONS") {
-    // Handle preflight request
     res.writeHead(204);
     res.end();
     return;
@@ -28,53 +32,59 @@ const server = http.createServer((req, res) => {
 
   // Route handling
   switch (true) {
+    case req.method === "POST" && req.url === "/users/loginUser":
+      loginUser(req, res);
+      break;
+    case req.method === "POST" && req.url === "/users/createUser":
+      createUser(req, res);
+      break;
     case req.method === "GET" && req.url.includes("/payments/getAllPayments"):
-      getPayments(req, res);
+      authenticateToken(req, res, () => getPayments(req, res));
       break;
     case req.method === "POST" && req.url === "/payments/uploadCSV":
-      uploadCSV(req, res);
+      authenticateToken(req, res, () => uploadCSV(req, res));
       break;
     case req.method === "POST" && req.url === "/payments/createPayment":
-      postPayment(req, res);
+      authenticateToken(req, res, () => postPayment(req, res));
       break;
     case req.method === "PUT" &&
       /^\/payments\/updatePayment\/([^\/]+)$/.test(req.url):
-      const paymentId = req.url.match(
-        /^\/payments\/updatePayment\/([^\/]+)$/
-      )[1];
-      req.paymentId = paymentId; // Attach paymentId to the request object
-      putPayment(req, res);
+      authenticateToken(req, res, () => {
+        const paymentId = req.url.match(
+          /^\/payments\/updatePayment\/([^\/]+)$/
+        )[1];
+        req.paymentId = paymentId; // Attach paymentId to the request object
+        putPayment(req, res);
+      });
       break;
     case req.method === "DELETE" &&
       /^\/payments\/deletePayment\/([^\/]+)$/.test(req.url):
-      const deletePaymentId = req.url.match(
-        /^\/payments\/deletePayment\/([^\/]+)$/
-      )[1];
-      req.paymentId = deletePaymentId; // Attach paymentId to the request object
-      deletePayment(req, res);
-      break;
-    case req.method === "POST" &&
-      /^\/payments\/[^\/]+\/evidence$/.test(req.url):
-      uploadEvidence(req, res);
+      authenticateToken(req, res, () => {
+        const deletePaymentId = req.url.match(
+          /^\/payments\/deletePayment\/([^\/]+)$/
+        )[1];
+        req.paymentId = deletePaymentId; // Attach paymentId to the request object
+        deletePayment(req, res);
+      });
       break;
     case req.method === "GET" &&
-      /^\/payments\/[^\/]+\/downloadEvidence$/.test(req.url):
-      const payment_Id = req.url.match(
-        /^\/payments\/([^\/]+)\/downloadEvidence$/
-      )[1];
-      req.paymentId = payment_Id; // Attach paymentId to the request object
-      downloadEvidence(req, res);
+      /^\/payments\/([^\/]+)\/downloadEvidence$/.test(req.url):
+      authenticateToken(req, res, () => {
+        const evidencePaymentId = req.url.match(
+          /^\/payments\/([^\/]+)\/downloadEvidence$/
+        )[1];
+        req.params = { paymentId: evidencePaymentId }; // Attach paymentId to the request object
+        downloadEvidence(req, res);
+      });
       break;
     default:
-      res.statusCode = 404;
-      res.setHeader("Content-Type", "application/json");
-      res.write(
+      res.writeHead(404, { "Content-Type": "application/json" });
+      res.end(
         JSON.stringify({ title: "Not Found", message: "Route not found" })
       );
-      res.end();
   }
 });
 
 server.listen(PORT, () => {
-  console.log(`Server started on port: ${PORT}`);
+  console.log(`Server is running on http://localhost:${PORT}`);
 });
