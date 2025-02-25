@@ -7,7 +7,7 @@ const dotenv = require("dotenv");
 const s3 = new AWS.S3();
 
 // Parameters
-const bucketName = "env-node-backend";
+const bucketName = "env-node-backend"; // Ensure this is your correct bucket name
 const envFileName = ".env";
 const envFilePath = path.join(__dirname, envFileName);
 
@@ -20,11 +20,18 @@ const downloadEnvFile = async () => {
 
   try {
     const data = await s3.getObject(params).promise();
-    fs.writeFileSync(envFilePath, data.Body.toString());
-    console.log(".env file downloaded successfully");
+    const envData = data.Body.toString();
+
+    // Log the contents of the .env file for debugging
+    console.log("Downloaded .env content:", envData); // Optional debugging step
+
+    fs.writeFileSync(envFilePath, envData);
+    console.log(
+      ".env file downloaded and written to local system successfully."
+    );
   } catch (error) {
     console.error("Error downloading .env file:", error);
-    process.exit(1); // Exit the process with an error code
+    process.exit(1); // Exit the process with an error code if download fails
   }
 };
 
@@ -32,10 +39,10 @@ const downloadEnvFile = async () => {
 const loadEnvVariables = () => {
   if (fs.existsSync(envFilePath)) {
     dotenv.config({ path: envFilePath });
-    console.log("Environment variables loaded");
+    console.log("Environment variables loaded successfully.");
   } else {
     console.error(".env file not found");
-    process.exit(1); // Exit the process with an error code
+    process.exit(1); // Exit the process if the .env file is not found
   }
 };
 
@@ -43,7 +50,9 @@ const loadEnvVariables = () => {
 const main = async () => {
   await downloadEnvFile();
   loadEnvVariables();
-  // Start your application here, e.g., require('./app');
+
+  // Start your application
+  require("./app"); // This will start the app.js file after loading the environment variables
 };
 
 main();

@@ -1,4 +1,3 @@
-require("./loadEnvFromS3.js");
 const http = require("http");
 const getPayments = require("./methods/get-payments.js");
 const postPayment = require("./methods/post-payment.js");
@@ -9,7 +8,7 @@ const downloadEvidence = require("./methods/download-evidence.js");
 const createUser = require("./methods/create-user.js");
 const loginUser = require("./methods/login-user.js");
 const authenticateToken = require("./middleware/auth.js"); // Import the middleware
-require("dotenv").config();
+// require("dotenv").config();
 
 const PORT = process.env.PORT || 5001;
 

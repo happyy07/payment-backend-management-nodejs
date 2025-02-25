@@ -3,6 +3,8 @@ require("dotenv").config();
 
 const uri = process.env.MONGODB_URL;
 const database = process.env.DATABASE_NAME;
+
+console.log("MONGODB_URL:", process.env.MONGODB_URL);
 const client = new MongoClient(uri);
 
 async function connectDB() {
