@@ -1,5 +1,3 @@
-require("./loadEnvFromS3.js");
-
 const http = require("http");
 const getPayments = require("./methods/get-payments.js");
 const postPayment = require("./methods/post-payment.js");

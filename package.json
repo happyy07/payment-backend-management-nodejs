@@ -2,9 +2,9 @@
   "name": "payment-backend-management-nodejs",
   "version": "1.0.0",
   "description": "",
-  "main": "app.js",
+  "main": "loadEnvFromS3.js",
   "scripts": {
-    "start": "nodemon app.js",
+    "start": "nodemon loadEnvFromS3.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
