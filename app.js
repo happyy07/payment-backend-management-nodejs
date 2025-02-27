@@ -16,7 +16,7 @@ const server = http.createServer((req, res) => {
   // Set CORS headers
   res.setHeader(
     "Access-Control-Allow-Origin",
-    "https://dh1r4fhf8pex4.cloudfront.net"
+    "http://dh1r4fhf8pex4.cloudfront.net"
   ); // Replace with your frontend URI
   // Allow specific headers & credentials
   res.setHeader(
