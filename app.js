@@ -16,7 +16,7 @@ const server = http.createServer((req, res) => {
   // Set CORS headers
   res.setHeader(
     "Access-Control-Allow-Origin",
-    "http://dh1r4fhf8pex4.cloudfront.net"
+    "https://payment-management.codewithme.click"
   ); // Replace with your frontend URI
   // Allow specific headers & credentials
   res.setHeader(
@@ -36,6 +36,10 @@ const server = http.createServer((req, res) => {
 
   // Route handling
   switch (true) {
+    case req.method === "GET" && req.url === "/health":
+      res.writeHead(200, { "Content-Type": "text/plain" });
+      res.end("OK");
+      break;
     case req.method === "POST" && req.url === "/users/loginUser":
       loginUser(req, res);
       break;
